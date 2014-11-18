@@ -35,6 +35,8 @@ public class LMC {
     // lmcRunCounter stores the number of steps taken when running the LMC
     // program.
     private int lmcRunCounter;
+    // This will mailboxes that contain data values
+    private int[][] dataStores;
 
     public LMC(String program) {
         // Set mailbox to store up 100 instructions
@@ -47,6 +49,8 @@ public class LMC {
         lmcRunCounter = 0;
         // sets the max steps taken to 100, although it could do more steps.
         stepsTaken = new int[100];
+        // Set the data store to hold a max of 100 data values
+        dataStores = new int[0][2];
         // Parse the program so it is readble.
         parseInstructions(program);
     }
@@ -141,7 +145,14 @@ public class LMC {
         System.out.print("Order of execution: ");
         // Outputs the steps that have been taken while running the program.
         for (int i = 0; i < lmcRunCounter; i++) {
-            System.out.print(stepsTaken[i] + ", ");
+            System.out.print(stepsTaken[i] + " -> ");
+        }
+        System.out.print("END");
+        // Shows which mailboxes contain data
+        System.out.print("\nMailboxes containing data ([mailbox | data]): ");
+        // Prints the mailboxes containing data
+        for(int i = 0; i < dataStores.length; i++){
+            System.out.print("["+dataStores[i][0]+" | "+dataStores[i][1]+"]   ");
         }
         // Exits the simulation
         System.exit(0);
@@ -166,6 +177,8 @@ public class LMC {
     private void lmcStore(int mailbox) {
         // Sets the mailbox provided to store the calculatorDisplay.
         mailboxes[mailbox] = calculatorDisplay;
+        // Stores the data in the dataStore array
+        addToData(mailbox);
         // Resets the calculatorDisplay to 0.
         calculatorDisplay = 0;
         // Increments the counter to the next instruction.
@@ -258,5 +271,24 @@ public class LMC {
         calculatorDisplay = 0;
         // Increment the counter to the next instruction.
         counter++;
+    }
+    
+    // Adds data to the dataStore
+    private void addToData(int mailbox){
+        // Creates a new array with the size of the dataStores plus 1
+        int[][] newArr = new int[dataStores.length+1][2];
+        // Adds existing data from dataStore to the new array, however it loops
+        // length - 1 times, so we can manually add the new value after the
+        // loop.
+        for(int i = 0; i < newArr.length-1; i++){
+            // inserts the data into the new array
+            newArr[i] = dataStores[i];
+        }
+        // Sets the mailbox value in the array
+        newArr[newArr.length-1][0] = mailbox;
+        // Sets the value in the array corresponding to the mailbox
+        newArr[newArr.length-1][1] = calculatorDisplay;
+        // Sets the dataStores to the new array
+        dataStores = newArr;
     }
 }
